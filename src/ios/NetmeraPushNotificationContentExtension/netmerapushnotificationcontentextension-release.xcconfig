@@ -1,0 +1,9 @@
+//
+// XCode Build settings for "Release" Build Configuration of NetmeraPushNotificationContentExtension.
+//
+
+CODE_SIGN_IDENTITY = iPhone Distribution
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Distribution
+
+#include "../Pods/Target Support Files/Pods-NetmeraPushNotificationContentExtension/Pods-NetmeraPushNotificationContentExtension.release.xcconfig"
+#include "../cordova/build-extras.xcconfig"

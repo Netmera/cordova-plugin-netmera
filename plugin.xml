@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-netmera" version="1.0.0"
+    xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>NetmeraPlugin</name>
+
+    <js-module name="NetmeraPlugin" src="NetmeraPlugin.js">
+        <clobbers target="NetmeraPlugin" />
+    </js-module>
+
+<!--     <preference name="NETMERA_KEY" />
+    <preference name="FCM_KEY" />
+    <preference name="NETMERA_BASE_URL" default=" "/> -->
+
+    <hook type="after_prepare" src="src/ios/hooks/NotificationExtension/addNotificationServiceExtension.js" />
+    <hook type="after_plugin_add" src="src/ios/hooks/NotificationExtension/addNotificationServiceExtension.js" />
+    <hook type="before_plugin_rm" src="src/ios/hooks/NotificationExtension/removeNotificationServiceExtension.js" />
+
+    <hook type="after_prepare" src="src/ios/hooks/NotificationContentExtension/addNotificationContentExtension.js" />
+    <hook type="after_plugin_add" src="src/ios/hooks/NotificationContentExtension/addNotificationContentExtension.js" />
+    <hook type="before_plugin_rm" src="src/ios/hooks/NotificationContentExtension/removeNotificationContentExtension.js" />
+
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="NetmeraPlugin">
+                <param name="android-package" value="com.netmera.cordova.plugin.NetmeraPlugin" />
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest" mode="merge">
+            <uses-permission android:name="android.permission.INTERNET"/>
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*/application">
+            <receiver android:name="com.netmera.cordova.plugin.PushReceiver" android:exported="false">
+                <intent-filter>
+                    <action android:name="com.netmera.web.content.SHOW"/>
+                    <action android:name="com.netmera.web.content.CLOSE"/>
+                    <action android:name="com.netmera.push.intent.REGISTER"/>
+                    <action android:name="com.netmera.push.intent.RECEIVE"/>
+                    <action android:name="com.netmera.push.intent.OPEN"/>
+                    <action android:name="com.netmera.push.intent.DISMISS"/>
+                    <action android:name="com.netmera.push.intent.BUTTON"/>
+                    <action android:name="com.netmera.push.intent.carousel.OPEN"/>
+                    <action android:name="com.netmera.push.intent.carousel.PREV"/>
+                    <action android:name="com.netmera.push.intent.carousel.NEXT"/>
+                    <action android:name="com.netmera.push.intent.carousel.ITEM"/>
+                </intent-filter>
+            </receiver>
+        </config-file>
+
+<!--         <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <meta-data android:name="NETMERA_KEY" android:value="$NETMERA_KEY" />
+            <meta-data android:name="FCM_KEY" android:value="X$FCM_KEY" />
+            <meta-data android:name="NETMERA_BASE_URL" android:value="$NETMERA_BASE_URL" />
+        </config-file>
+ -->
+        <config-file parent="/*" target="AndroidManifest.xml" />
+        <source-file src="src/android/NetmeraPlugin.java" target-dir="src/com/netmera/cordova/plugin" />
+        <source-file src="src/android/PushReceiver.java" target-dir="src/com/netmera/cordova/plugin" />
+        <source-file src="src/android/NetmeraApplication.java" target-dir="src/com/netmera/cordova/plugin" />
+        <framework src="netmera.gradle" custom="true" type="gradleReference" />
+        <!-- <framework src="com.netmera:netmera:3.8.5-beta7" /> -->
+        <framework src="com.google.gms:google-services:4.3.4" />
+
+        <hook type="after_plugin_add" src="afterPluginAdd.js" />
+    </platform>
+
+    <platform name="ios">
+<!--         <config-file target="*-Info.plist" parent="NetmeraKey">
+            <string>$NETMERA_KEY</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="FCMKey">
+            <string>$FCM_KEY</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="NetmeraBaseUrl">
+            <string>$NETMERA_BASE_URL</string>
+        </config-file> -->
+        <config-file parent="/*" target="config.xml">
+            <feature name="NetmeraPlugin">
+                <param name="ios-package" value="NetmeraPlugin" />
+            </feature>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="UIBackgroundModes">
+            <array>
+                <string>remote-notification</string>
+            </array>
+        </config-file>
+        <config-file target="*-Debug.plist" parent="aps-environment">
+            <string>development</string>
+        </config-file>
+        <config-file target="*-Release.plist" parent="aps-environment">
+            <string>production</string>
+        </config-file>
+
+        <!-- <framework src="Netmera" type="podspec" spec="3.9.2" /> -->
+        <podspec>
+            <config>
+                <source url="https://github.com/CocoaPods/Specs.git"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="Netmera" spec="3.11.2-beta3"/>
+            </pods>
+        </podspec>
+        <header-file src="src/ios/NetmeraPlugin.h" />
+        <source-file src="src/ios/NetmeraPlugin.m" />
+        <header-file src="src/ios/AppDelegate+NetmeraPlugin.h" />
+        <source-file src="src/ios/AppDelegate+NetmeraPlugin.m" />
+        <header-file src="src/ios/FNetmeraUser.h" />
+        <source-file src="src/ios/FNetmeraUser.m" />
+        <header-file src="src/ios/FNetmeraEvent.h" />
+        <source-file src="src/ios/FNetmeraEvent.m" />
+    </platform>
+</plugin>
