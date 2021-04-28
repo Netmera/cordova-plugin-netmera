@@ -283,9 +283,9 @@ public class NetmeraPlugin extends CordovaPlugin {
     }
 
     private void updatePushStatus(int index, int length, int status, CallbackContext callbackContext) {
-        int lastIndex = index + length - 1;
+        int lastIndex = index + length;
         List<NetmeraPushObject> objectsToDelete = netmeraInbox.pushObjects().subList(index, lastIndex);
-        netmeraInbox.updateStatus(objectsToDelete,NetmeraPushObject.STATUS_READ,
+        netmeraInbox.updateStatus(objectsToDelete,status,
                 new NetmeraInbox.NetmeraInboxStatusCallback() {
                     @Override
                     public void onSetStatusInbox(NetmeraError error) {
