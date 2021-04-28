@@ -214,7 +214,7 @@ static NetmeraPlugin *netmeraPlugin;
     filter.status = [[userFilter valueForKey:@"status"] intValue];
     filter.pageSize = [[userFilter valueForKey:@"pageSize"] intValue];
     filter.categories = [userFilter valueForKey:@"categories"];
-    filter.shouldIncludeExpiredObjects = [userFilter valueForKey:@"shouldIncludeExpiredObjects"];
+    filter.shouldIncludeExpiredObjects = [userFilter valueForKey:@"includeExpiredObjects"];
     
     [Netmera fetchInboxUsingFilter:filter
                         completion:^(NetmeraInbox *inbox, NSError *error) {
