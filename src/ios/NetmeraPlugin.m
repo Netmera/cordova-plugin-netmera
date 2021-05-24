@@ -86,7 +86,7 @@ static NetmeraPlugin *netmeraPlugin;
                 self.notificationClickCallbackId = command.callbackId;
                 return;
             }
-            NSString *strISOLatin = [[NSString alloc] initWithData:dataPayload encoding:NSISOLatin1StringEncoding];
+            NSString *strISOLatin = [[NSString alloc] initWithData:dataPayload encoding:NSUTF8StringEncoding];
             NSData *dataPayloadUTF8 = [strISOLatin dataUsingEncoding:NSUTF8StringEncoding];
             NSError* error = nil;
             NSDictionary *payloadDictionary = [NSJSONSerialization JSONObjectWithData:dataPayloadUTF8 options:0 error:&error];
