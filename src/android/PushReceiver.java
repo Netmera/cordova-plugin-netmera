@@ -21,6 +21,7 @@ public class PushReceiver extends NetmeraPushBroadcastReceiver {
     @Override
     protected void onPushOpen(Context context, Bundle bundle, NetmeraPushObject netmeraPushObject) {
         //if you want to know when a push is opened
+        NetmeraPlugin.setInitialPushPayload(netmeraPushObject);
         NetmeraPlugin.sendPushClick(netmeraPushObject);
     }
 

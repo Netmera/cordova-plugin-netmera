@@ -66,6 +66,7 @@ public class NetmeraPlugin extends CordovaPlugin {
     protected static CallbackContext pushCallbackContext;
     protected static CallbackContext pushClickCallbackContext;
     protected static CallbackContext pushButtonClickCallbackContext;
+    public static NetmeraPushObject initialPushPayload;
 
 
     public static final String TAG = "NetmeraPlugin";
@@ -120,7 +121,7 @@ public class NetmeraPlugin extends CordovaPlugin {
             try {
                 JSONObject pushObject = returnPushObject(push);
                 PluginResult result = new PluginResult(PluginResult.Status.OK, pushObject);
-                result.getKeepCallback();
+                result.setKeepCallback(true);
                 pushCallbackContext.sendPluginResult(result);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -134,7 +135,7 @@ public class NetmeraPlugin extends CordovaPlugin {
             try {
                 JSONObject pushObject = returnPushObject(push);
                 PluginResult result = new PluginResult(PluginResult.Status.OK, pushObject);
-                result.getKeepCallback();
+                result.setKeepCallback(true);
                 pushClickCallbackContext.sendPluginResult(result);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -148,13 +149,21 @@ public class NetmeraPlugin extends CordovaPlugin {
             try {
                 JSONObject pushObject = returnPushObject(push);
                 PluginResult result = new PluginResult(PluginResult.Status.OK, pushObject);
-                result.getKeepCallback();
+                result.setKeepCallback(true);
                 pushButtonClickCallbackContext.sendPluginResult(result);
             } catch (JSONException e) {
                 e.printStackTrace();
                 pushButtonClickCallbackContext.error(e.getMessage());
             }
         }
+    }
+
+    public static void setInitialPushPayload(NetmeraPushObject payload) {
+        initialPushPayload = payload;
+    }
+
+    public NetmeraPushObject getInitialPushPayload() {
+        return initialPushPayload;
     }
 
     @Override
@@ -179,7 +188,24 @@ public class NetmeraPlugin extends CordovaPlugin {
             pushCallbackContext = callbackContext;
             return true;
         } else if (action.equals("subscribePushClick")) {
-            pushClickCallbackContext = callbackContext;
+            NetmeraPushObject initPush = getInitialPushPayload();
+            if (initPush == null) {
+                pushClickCallbackContext = callbackContext;
+                return true;
+            }
+            cordova.getThreadPool().execute(new Runnable() {
+                public void run() {
+                    try {
+                        pushClickCallbackContext = callbackContext;
+                        JSONObject pushObject = returnPushObject(initPush);
+                        PluginResult result = new PluginResult(PluginResult.Status.OK, pushObject);
+                        result.setKeepCallback(true);
+                        pushClickCallbackContext.sendPluginResult(result);
+                    } catch (Exception e) {
+                        callbackContext.error(e.getMessage());
+                    }
+                }
+            });
             return true;
         } else if (action.equals("subscribePushButtonClick")) {
             pushButtonClickCallbackContext = callbackContext;
