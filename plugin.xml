@@ -12,13 +12,7 @@
     <preference name="FCM_KEY" />
     <preference name="NETMERA_BASE_URL" default=" "/> -->
 
-    <hook type="after_prepare" src="src/ios/hooks/NotificationExtension/addNotificationServiceExtension.js" />
-    <hook type="after_plugin_add" src="src/ios/hooks/NotificationExtension/addNotificationServiceExtension.js" />
-    <hook type="before_plugin_rm" src="src/ios/hooks/NotificationExtension/removeNotificationServiceExtension.js" />
 
-    <hook type="after_prepare" src="src/ios/hooks/NotificationContentExtension/addNotificationContentExtension.js" />
-    <hook type="after_plugin_add" src="src/ios/hooks/NotificationContentExtension/addNotificationContentExtension.js" />
-    <hook type="before_plugin_rm" src="src/ios/hooks/NotificationContentExtension/removeNotificationContentExtension.js" />
 
     <platform name="android">
         <config-file parent="/*" target="res/xml/config.xml">
@@ -32,10 +26,11 @@
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
             <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+            <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/*/application">
-            <receiver android:name="com.netmera.cordova.plugin.PushReceiver" android:exported="false">
+            <receiver android:name="com.netmera.NetmeraPushBroadcast" android:exported="false">
                 <intent-filter>
                     <action android:name="com.netmera.web.content.SHOW"/>
                     <action android:name="com.netmera.web.content.CLOSE"/>
@@ -105,7 +100,7 @@
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Netmera" spec="3.11.2-beta3"/>
+                <pod name="Netmera" spec="3.25.0-WithoutDependency"/>
             </pods>
         </podspec>
         <header-file src="src/ios/NetmeraPlugin.h" />
@@ -116,5 +111,7 @@
         <source-file src="src/ios/FNetmeraUser.m" />
         <header-file src="src/ios/FNetmeraEvent.h" />
         <source-file src="src/ios/FNetmeraEvent.m" />
+        <header-file src="src/ios/NetmeraConfigReader.h" />
+        <source-file src="src/ios/NetmeraConfigReader.m" />
     </platform>
 </plugin>

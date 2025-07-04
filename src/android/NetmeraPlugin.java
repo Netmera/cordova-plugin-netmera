@@ -1,7 +1,12 @@
 package com.netmera.cordova.plugin;
 
+import android.app.Activity;
 import android.util.Log;
 import android.content.Context;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.annotations.SerializedName;
@@ -13,6 +18,10 @@ import com.netmera.NetmeraInboxFilter;
 import com.netmera.NetmeraLogEvent;
 import com.netmera.NetmeraPushObject;
 import com.netmera.NetmeraUser;
+import com.netmera.callbacks.NMInboxCountResultListener;
+import com.netmera.data.NMInboxStatus;
+import com.netmera.data.NMInboxStatusCount;
+import com.netmera.data.NMInboxStatusCountFilter;
 import com.netmera.events.NetmeraEventBannerOpen;
 import com.netmera.events.NetmeraEventBatteryLevel;
 import com.netmera.events.NetmeraEventCategoryView;
@@ -211,6 +220,20 @@ public class NetmeraPlugin extends CordovaPlugin {
             pushButtonClickCallbackContext = callbackContext;
             return true;
         } else if (action.equals("requestPushNotificationAuthorization")) {
+            cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+              try {
+                Activity activity = cordova.getActivity();
+                if (activity != null) {
+                  Netmera.requestNotificationPermissions(activity);
+                } else {
+                  Log.e("NETMERA", "Cannot call requestNotificationPermissions because current CordovaActivity is null");
+                }
+              } catch (Exception e) {
+                callbackContext.error(e.getMessage());
+              }
+            }
+          });
             return true;
         } else if (action.equals("subscribeOpenUrl")) {
             return true;
@@ -324,10 +347,40 @@ public class NetmeraPlugin extends CordovaPlugin {
                 });
     }
 
+    public NMInboxStatus getInboxStatus(int code) {
+        for (NMInboxStatus value : NMInboxStatus.values()) {
+            if (value.getCode() == code) {
+                return value;
+            }
+        }
+        return NMInboxStatus.STATUS_ALL;
+    }
+
     private void countForStatus(int status, CallbackContext callbackContext) {
-        int count = 0;
-        count = netmeraInbox.countForStatus(status);
-        callbackContext.success(count);
+        NMInboxStatus matchedStatus = getInboxStatus(status);
+
+        if (matchedStatus != null) {
+            NMInboxStatusCountFilter filter = new NMInboxStatusCountFilter.Builder()
+                    .setInboxStatus(matchedStatus)
+                    .build();
+
+            Netmera.getInboxCountForStatus(filter, new NMInboxCountResultListener() {
+
+                @Override
+                public void onSuccess(@NonNull NMInboxStatusCount nmInboxStatusCount) {
+                    Integer countObj = nmInboxStatusCount.getCountForStatus(matchedStatus);
+                    int count = countObj != null ? countObj : 0;
+                    callbackContext.success(count);
+                }
+
+                @Override
+                public void onFailure(@Nullable String s) {
+                    callbackContext.error(s);
+                }
+            });
+        } else {
+            callbackContext.error("Status not found");
+        }
     }
 
     private void requestPermissionsForLocation(CallbackContext callbackContext) {

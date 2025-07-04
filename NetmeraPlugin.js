@@ -52,7 +52,7 @@ exports.updateUser = function (arg0) {
     exec(onSuccess, onFailure,'NetmeraPlugin', 'updateUser', [arg0]);
 };
 
-exports.requestLocationAuthorization = function() {
+exports.askLocationAuthorization = function () {
     exec(onSuccess, onFailure, 'NetmeraPlugin', 'requestLocationAuthorization', []);
 };
 

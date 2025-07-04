@@ -289,13 +289,26 @@ static NetmeraPlugin *netmeraPlugin;
 
 - (void)countForStatus:(CDVInvokedUrlCommand*)command
 {
-    CDVPluginResult* pluginResult = nil;
     NSNumber* countType = [command.arguments objectAtIndex:0];
     int countInt = [countType intValue];
-    NSUInteger numberOfValue = 0;
-    numberOfValue = [netmeraInbox countForStatus:countInt];
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int) numberOfValue];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    
+    NetmeraInboxStatus status = (NetmeraInboxStatus)countInt;
+    NetmeraInboxCountFilter *filter = [[NetmeraInboxCountFilter alloc] init];
+    filter.status = status;
+
+    [Netmera fetchInboxCountWithFilter:(filter)
+                            completion:^(NetmeraInboxCountResponse * _Nullable response, NSError * _Nullable error) {
+        CDVPluginResult* pluginResult = nil;
+        if(error) {
+            NSLog(@"Error : %@", [error debugDescription]);
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+        } else {
+            NSUInteger numberOfValue = [response countForStatus:status];
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(int) numberOfValue];
+        }
+        
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
 }
 
 - (void)updatePushStatus:(CDVInvokedUrlCommand*)command

@@ -90,7 +90,6 @@ const addExtensionToProject = (contextHelper, project) => {
   const projectHelper = new ProjectHelper(project);
 
   const existingServiceExtensions = projectHelper.getAppExtensionTargets();
-  logHelper.warn("enis")
   logHelper.warn(JSON.stringify(existingServiceExtensions));
 
   // Message user if another extension that is not ours is found

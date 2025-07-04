@@ -3,6 +3,8 @@ package com.netmera.cordova.plugin;
 import android.app.Application;
 import android.util.Log;
 import com.netmera.Netmera;
+import com.netmera.NetmeraConfiguration;
+
 import org.apache.cordova.ConfigXmlParser;
 
 public class NetmeraApplication extends Application {
@@ -20,13 +22,17 @@ public class NetmeraApplication extends Application {
             String netmeraBaseUrl = parser.getPreferences().getString("NetmeraBaseUrl", null);
 
             if (netmeraKey != null && netmeraFCM != null) {
-                Netmera.init(this, netmeraFCM, netmeraKey);
+              NetmeraConfiguration.Builder configBuilder = new NetmeraConfiguration.Builder();
+              configBuilder
+                .baseUrl(netmeraBaseUrl)
+                .apiKey(netmeraKey)
+                .firebaseSenderId(netmeraFCM)
+                .logging(true)
+                .disableSerializeRule(false)
+                .nmPushActionCallbacks(new PushReceiver());
+              Netmera.init(configBuilder.build(this));
             }
 
-            if(netmeraBaseUrl != null) {
-                Netmera.setBaseUrl(netmeraBaseUrl);
-            }
-            Netmera.logging(true);
             Netmera.enablePopupPresentation();
         } catch (NullPointerException e) {
             Log.e("TAG", "Failed to load meta-data, NullPointer: " + e.getMessage());

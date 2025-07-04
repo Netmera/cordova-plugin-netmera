@@ -2,7 +2,7 @@
 //  AppDelegate+NetmeraPlugin.m
 //  MyApp
 //
-//  Created by Enis Terzioğlu on 4.01.2021.
+//  Created by Netmera on 4.01.2021.
 //
 
 #import "AppDelegate+NetmeraPlugin.h"
@@ -10,6 +10,7 @@
 #import <objc/runtime.h>
 #import <Foundation/Foundation.h>
 #import <Netmera/Netmera.h>
+#import "NetmeraConfigReader.h"
 
 @import UserNotifications;
 
@@ -31,19 +32,15 @@ static NSData *lastPush;
     [self application:application customDidFinishLaunchingWithOptions:launchOptions];
     [UNUserNotificationCenter currentNotificationCenter].delegate = self;
     [Netmera start];
+    [Netmera setLogLevel:(NetmeraLogLevelDebug)];
     [Netmera setPushDelegate:self];
-      
-    // For On-premise setup
-    // [Netmera setBaseURL:@"YOUR PANEL DOMAIN URL"];
-      
-    // This can be called later, see documentation for details
-    //[Netmera setAPIKey:@"QBT4dSEEyRKGPVLbZIazzSnz0D1KJZBQDk_SIUSBonc15Aa2t9HUNg"];
-    //[Netmera setLogLevel:(NetmeraLogLevelDebug)];
+    [Netmera setEnabledPopupPresentation:true];
     
-    //[Netmera requestPushNotificationAuthorizationForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound];
-    
-    //[application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound |UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
-    //[application registerForRemoteNotifications];
+    NetmeraConfigReader *reader = [[NetmeraConfigReader alloc] init];
+    [reader readConfig];
+    [Netmera setAPIKey:reader.netmeraKey];
+    NSLog(@"🔐 API Key-1: %@", reader.netmeraKey);
+      
     return YES;
 }
 
@@ -62,18 +59,6 @@ static NSData *lastPush;
 {
     NSLog(@"Error in registration. Error: %@", err);
 }
-
-
-//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
-//{
-//    
-//    
-//    //NSDictionary *mutableUserInfo = [userInfo mutableCopy];
-//        // Print full message.
-//      //  NSLog(@"%@", mutableUserInfo);
-//        completionHandler(UIBackgroundFetchResultNewData);
-//        //[NetmeraPlugin.netmeraPlugin sendNotification:mutableUserInfo];
-//}
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler
 {
@@ -103,7 +88,7 @@ static NSData *lastPush;
 
 - (BOOL)shouldHandleOpenURL:(NSURL *)url forPushObject:(NetmeraPushObject *)object {
 //Deeplink is checked(valid or invalid)
-  return YES;
+  return FALSE;
 }
 
 - (void)handleOpenURL:(NSURL *)url forPushObject:(NetmeraPushObject *)object {
