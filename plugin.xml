@@ -32,8 +32,6 @@
         <config-file target="AndroidManifest.xml" parent="/*/application">
             <receiver android:name="com.netmera.NetmeraPushBroadcast" android:exported="false">
                 <intent-filter>
-                    <action android:name="com.netmera.web.content.SHOW"/>
-                    <action android:name="com.netmera.web.content.CLOSE"/>
                     <action android:name="com.netmera.push.intent.REGISTER"/>
                     <action android:name="com.netmera.push.intent.RECEIVE"/>
                     <action android:name="com.netmera.push.intent.OPEN"/>
