@@ -11,6 +11,7 @@
 @interface NetmeraConfigReader : NSObject <NSXMLParserDelegate>
 
 @property (nonatomic, strong) NSString *netmeraKey;
+@property (nonatomic, strong) NSString *netmeraBaseURL;
 
 - (void)readConfig;
 

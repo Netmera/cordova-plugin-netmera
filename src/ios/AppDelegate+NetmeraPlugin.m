@@ -39,10 +39,13 @@ static NSData *lastPush;
     NetmeraConfigReader *reader = [[NetmeraConfigReader alloc] init];
     [reader readConfig];
     [Netmera setAPIKey:reader.netmeraKey];
-    NSLog(@"🔐 API Key-1: %@", reader.netmeraKey);
+    if (reader.netmeraBaseURL != NULL) {
+        [Netmera setBaseURL:reader.netmeraBaseURL];
+    }
       
     return YES;
 }
+
 
 + (NSString*)getAPNSToken {
     return apnsToken;

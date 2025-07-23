@@ -46,6 +46,10 @@ didStartElement:(NSString *)elementName
         if ([nameAttr isEqualToString:@"NetmeraKey"]) {
             self.netmeraKey = attributeDict[@"value"];
         }
+
+        if ([nameAttr isEqualToString:@"NetmeraBaseUrl"]) {
+            self.netmeraBaseURL = attributeDict[@"value"];
+        }
     }
 }
 
