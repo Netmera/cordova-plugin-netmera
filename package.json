@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-netmera-v2",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Netmera Cordova Plugin",
   "dependencies": {
     "fs-extra": "^8.1.0",

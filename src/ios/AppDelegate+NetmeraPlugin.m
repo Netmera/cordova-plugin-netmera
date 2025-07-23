@@ -32,16 +32,19 @@ static NSData *lastPush;
     [self application:application customDidFinishLaunchingWithOptions:launchOptions];
     [UNUserNotificationCenter currentNotificationCenter].delegate = self;
     [Netmera start];
-    [Netmera setLogLevel:(NetmeraLogLevelDebug)];
-    [Netmera setPushDelegate:self];
-    [Netmera setEnabledPopupPresentation:true];
     
     NetmeraConfigReader *reader = [[NetmeraConfigReader alloc] init];
     [reader readConfig];
-    [Netmera setAPIKey:reader.netmeraKey];
+
     if (reader.netmeraBaseURL != NULL) {
         [Netmera setBaseURL:reader.netmeraBaseURL];
     }
+
+    [Netmera setAPIKey:reader.netmeraKey];
+
+    [Netmera setLogLevel:(NetmeraLogLevelDebug)];
+    [Netmera setPushDelegate:self];
+    [Netmera setEnabledPopupPresentation:true];
       
     return YES;
 }
